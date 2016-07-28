@@ -1,4 +1,8 @@
 <?php
+/**
+ *  @author: Shahriar
+ *  Create bulk HTML markup for gallery from image file name from an entire folder
+ */
 
 $dir = new DirectoryIterator(dirname(__FILE__).'/img');
 foreach ($dir as $fileinfo) {

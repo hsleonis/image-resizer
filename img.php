@@ -1,4 +1,8 @@
 <?php
+/**
+ *  @author: Shahriar
+ *  Resize Images proportionaly
+ */
 
 $dir = new DirectoryIterator(dirname(__FILE__).'/img');
 foreach ($dir as $fileinfo) {

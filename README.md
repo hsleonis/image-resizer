@@ -1,1 +1,3 @@
-# image-resizer
+# PHP Image Resizer
+
+Using GD library
