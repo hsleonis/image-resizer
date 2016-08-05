@@ -4,16 +4,17 @@
  *  Resize Images proportionaly
  */
 
+ini_set("memory_limit","256M");
+
 $dir = new DirectoryIterator(dirname(__FILE__).'/img');
 foreach ($dir as $fileinfo) {
     if (!$fileinfo->isDot()) {
-        $i = createThumbnail($fileinfo->getFilename(), 200, 251, dirname(__FILE__).'/img',  dirname(__FILE__).'/thumb/tn_');
+        $i = createThumbnail($fileinfo->getFilename(), 1200, 500, dirname(__FILE__).'/img',  dirname(__FILE__).'/thumb/tn_');
         if($i) echo $fileinfo->getFilename().' resized.';
     }
 }
 
-function createThumbnail($imageName,$newWidth,$newHeight,$uploadDir,$moveToDir)
-{
+function createThumbnail($imageName,$newWidth,$newHeight,$uploadDir,$moveToDir) {
     $path = $uploadDir . '/' . $imageName;
 
     $mime = getimagesize($path);
