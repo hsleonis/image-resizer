@@ -26,7 +26,7 @@ class ImageResizer{
             $this->width        = isset($arr['width'])? $arr['width'] : 200;
             $this->img_dir      = isset($arr['img_dir'])? $arr['img_dir']: dirname(__FILE__).'/img';
             $this->thumb_dir    = isset($arr['thumb_dir'])? $arr['thumb_dir'].'/': dirname(__FILE__).'/thumb/';
-            $this->compress     = isset($arr['compress'])? $arr['compress']: 8;
+            $this->compress     = isset($arr['compress'])? ($arr['compress']>=0 && $arr['compress']<=10)? $arr['compress']:10:8;
         }
         else return false;
     }
