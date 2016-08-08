@@ -107,8 +107,8 @@ class ImageResizer{
      * Increase memory limit, execution time to work on lots of images
      */
     private function set_env(){
-        ini_set("memory_limit","256M");
-        ini_set('max_execution_time', 3000);
+        ini_set("memory_limit", "256M");
+        ini_set("max_execution_time", 3000);
     }
 
     /**
@@ -184,24 +184,22 @@ class ImageResizer{
         $this->show_result_before();
 
         // get all images from the directory
-        $dir = new DirectoryIterator($this->path);
-        foreach ($dir as $fileinfo) {
-            if (!$fileinfo->isDot()) {
+        $dir = new \DirectoryIterator($this->path);
 
-                $i = $this->createThumbnail($fileinfo->getFilename(), $this->width, $this->height, $this->img_dir, $this->thumb_dir);
-                if($i) echo '<li class="msg-success" ><b>'.$fileinfo->getFilename().'</b> resized.</li>';
-                else echo '<li class="msg-error">Resizing error on <b>'.$fileinfo->getFilename().'</b></li>';
+        // check if there are files
+        if($dir->valid()) {
+            foreach ($dir as $fileinfo) {
+                if (!$fileinfo->isDot()) {
+
+                    $i = $this->createThumbnail($fileinfo->getFilename(), $this->width, $this->height, $this->img_dir, $this->thumb_dir);
+                    if ($i) echo '<li class="msg-success" ><b>' . $fileinfo->getFilename() . '</b> resized.</li>';
+                    else echo '<li class="msg-error">Resizing error on <b>' . $fileinfo->getFilename() . '</b></li>';
+                }
             }
         }
+        else echo '<li class="msg-error">No files found</li>';
 
         // result view end
         $this->show_result_after();
     }
 }
-
-// Create thumbnails
-$args = array(
-    'compress' => 8
-);
-$img = new ImageResizer($args);
-$img->create();
