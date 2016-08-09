@@ -154,6 +154,9 @@ class ImageResizer{
 
         $dst_img        =   ImageCreateTrueColor($thumb_w,$thumb_h);
 
+        $color = imagecolorallocatealpha($dst_img, 0, 0, 0, 127);
+        imagefill($dst_img,0,0,$color);
+        imagesavealpha($dst_img, true);
         imagecopyresampled($dst_img,$src_img,0,0,0,0,$thumb_w,$thumb_h,$old_x,$old_y);
 
         // New save location
