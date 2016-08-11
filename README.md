@@ -1,7 +1,10 @@
 # PHP Image Resizer
 
-Create image thumbnails or scale to eaxct size instantly with PHP and the awesome GD library.
-GD library is builtin with mosth PHP build. To make sure, use `phpinfo()`
+Create bulk image thumbnails or scale to eaxct size instantly with PHP and the awesome GD library.
+GD library is builtin with most PHP build. To make sure, use `phpinfo()`.
+
+This library will create thumbnails of all images from the given directory path and store them wherever you want.
+You can just resize proportionally, crop to exact dimension after resizing proportionally and compress to reduce image size keeping good quality.
 
 # How to use
 Require the `class.imageresizer.php` from your file.
