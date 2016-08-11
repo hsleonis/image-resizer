@@ -6,7 +6,7 @@ GD library is builtin with most PHP build. To make sure, use `phpinfo()`.
 This library will create thumbnails of all images from the given directory path and store them wherever you want.
 You can just resize proportionally, crop to exact dimension after resizing proportionally and compress to reduce image size keeping good quality.
 
-This library comes with default HTML preview for your entertainment.
+This library comes with default HTML resized image list.
 
 # How to use
 Require the `class.imageresizer.php` from your file.
