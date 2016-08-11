@@ -12,7 +12,8 @@ Require the `class.imageresizer.php` from your file.
 require_once ('class.imageresizer.php');
 ````
 
-Now pass an argument associative array if you want or just `create()`
+### With options
+Now pass an argument associative array with options
 ````php
 // Create thumbnails
 $args = array(
@@ -24,6 +25,42 @@ $img = new ImageResizer($args);
 $img->create();
 ````
 
+### Without options
+You can just use default properties by just:
+
+````php
+$img = new ImageResizer();
+$img->create();
+````
+
+### Single image
+`create()` function will resize all image files from the folder. To resize only one image, use `createThumbnail()`. You have to pass the image filename with extension, width in pixel and height in pixel as arguments:
+
+````php
+$args = array(
+    'compress'     => 0.8,
+    'is_crop_hard' => 1
+);
+$img = new ImageResizer($args);
+$img->createThumbnail('Desires_LB_MF16_7290.jpg',300,450);
+````
+
+### Prevent HTML resize list
+To prevent the class from printing image resize list as HTML, use 'resize_list' property:
+````php
+$args = array(
+    'height'    => 400,
+    'width'     => 270,
+    'is_crop_hard' => 1,
+    'resize_list'  => false
+);
+$img = new ImageResizer($args);
+$msg = $img->create();
+
+// Now we can do whatever we want, maybe JSON
+print_r(json_encode($msg));
+````
+
 # Agruments
 
 Key | Type | Value | Default
@@ -32,8 +69,9 @@ height | int/float | Thumbnail height in px | 200
 width | int/float | Thumbnail width in px | 200
 img_dir | string | Full size image directory path | /img
 thumb_dir | string | Thumbnail image directory path | /thumb
-compress | int/float | Image compression (0~1) | 0.8
+compress | int/float | Image compression (0~1, 0.15 is 15% ) | 0.8
 is_crop_hard | boolean | Crops the image with exact height & width proportionally from the center of the image | false
+resize_list | boolean | Prevents default HTML resized image list | true
 
 # Example
 This is how it works:

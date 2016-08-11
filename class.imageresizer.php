@@ -1,6 +1,6 @@
 <?php
 /**
- *  @author: Shahriar
+ *  @author: Hasan Shahriar
  *  @url: http://github.com/hsleonis
  *  Resize Bulk Images using GD Library
  */
@@ -13,6 +13,7 @@ class ImageResizer{
     private $thumb_dir;
     private $compress;
     private $is_crop_hard;
+    private $resize_list;
 
     /**
      * ImageResizer constructor.
@@ -29,6 +30,7 @@ class ImageResizer{
             $this->thumb_dir    = isset($arr['thumb_dir'])? $arr['thumb_dir'].'/': dirname(__FILE__).'/thumb/';
             $this->compress     = isset($arr['compress'])? ($arr['compress']>=0 && $arr['compress']<=1)? $arr['compress']:1:0.8;
             $this->is_crop_hard = isset($arr['is_crop_hard'])?(bool)$arr['is_crop_hard']:false;
+            $this->resize_list = isset($arr['resize_list'])?(bool)$arr['resize_list']:true;
         }
         else return false;
     }
@@ -134,7 +136,7 @@ class ImageResizer{
 
     /**
      * Save new image to new_thumb_loc
-     * @param $path
+     * @param $dst_src
      * @param $new_thumb_loc
      * @param $mime
      * @return bool
@@ -153,8 +155,6 @@ class ImageResizer{
      * @param $imageName
      * @param $newWidth
      * @param $newHeight
-     * @param $uploadDir
-     * @param $moveToDir
      * @return bool
      */
     public function createThumbnail($imageName,$newWidth,$newHeight) {
@@ -226,10 +226,12 @@ class ImageResizer{
         $this->set_directory();
 
         // result view
-        $this->show_result_before();
+        if($this->resize_list) $this->show_result_before();
 
         // get all images from the directory
         $dir = new \DirectoryIterator($this->path);
+
+        $resize_msg = array();
 
         // check if there are files
         if($dir->valid()) {
@@ -237,14 +239,23 @@ class ImageResizer{
                 if (!$fileinfo->isDot()) {
 
                     $i = $this->createThumbnail($fileinfo->getFilename(), $this->width, $this->height);
-                    if ($i) echo '<li class="msg-success" ><b>' . $fileinfo->getFilename() . '</b> resized.</li>';
-                    else echo '<li class="msg-error">Resizing error on <b>' . $fileinfo->getFilename() . '</b></li>';
+
+                    if($this->resize_list) {
+                        if ($i) echo '<li class="msg-success" ><b>' . $fileinfo->getFilename() . '</b> resized.</li>';
+                        else echo '<li class="msg-error">Resizing error on <b>' . $fileinfo->getFilename() . '</b></li>';
+                    }
+                    $resize_msg[$fileinfo->getFilename()] = (bool)$i;
                 }
             }
         }
-        else echo '<li class="msg-error">No files found</li>';
+        else {
+            if($this->resize_list)
+            echo '<li class="msg-error">No files found</li>';
+        }
 
         // result view end
-        $this->show_result_after();
+        if($this->resize_list) $this->show_result_after();
+
+        return $resize_msg;
     }
 }
