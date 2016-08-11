@@ -208,7 +208,7 @@ class ImageResizer{
 
         $new_thumb_loc = $moveToDir . $imageName;
         $result = $this->save($dst_img, $new_thumb_loc, $mime);
-        
+
         imagedestroy($dst_img);
         imagedestroy($src_img);
         return $result;
