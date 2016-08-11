@@ -6,6 +6,8 @@ GD library is builtin with most PHP build. To make sure, use `phpinfo()`.
 This library will create thumbnails of all images from the given directory path and store them wherever you want.
 You can just resize proportionally, crop to exact dimension after resizing proportionally and compress to reduce image size keeping good quality.
 
+This library comes with default HTML preview for your entertainment.
+
 # How to use
 Require the `class.imageresizer.php` from your file.
 ````php
@@ -46,7 +48,7 @@ $img->createThumbnail('Desires_LB_MF16_7290.jpg',300,450);
 ````
 
 ### Prevent HTML resize list
-To prevent the class from printing image resize list as HTML, use 'resize_list' property:
+To prevent the class from printing image resize list as HTML, use `resize_list` property:
 ````php
 $args = array(
     'height'    => 400,
@@ -67,8 +69,8 @@ Key | Type | Value | Default
 --- | --- | --- | ---
 height | int/float | Thumbnail height in px | 200
 width | int/float | Thumbnail width in px | 200
-img_dir | string | Full size image directory path | /img
-thumb_dir | string | Thumbnail image directory path | /thumb
+img_dir | string | Full size image directory path | '/img'
+thumb_dir | string | Thumbnail image directory path (Remember to add extra backslash after. You can use file name prefix :) ) | '/thumb/'
 compress | int/float | Image compression (0~1, 0.15 is 15% ) | 0.8
 is_crop_hard | boolean | Crops the image with exact height & width proportionally from the center of the image | false
 resize_list | boolean | Prevents default HTML resized image list | true
