@@ -12,6 +12,7 @@ class ImageResizer{
     private $img_dir;
     private $thumb_dir;
     private $compress;
+    private $is_crop_hard;
 
     /**
      * ImageResizer constructor.
@@ -26,7 +27,8 @@ class ImageResizer{
             $this->width        = isset($arr['width'])? $arr['width'] : 200;
             $this->img_dir      = isset($arr['img_dir'])? $arr['img_dir']: dirname(__FILE__).'/img';
             $this->thumb_dir    = isset($arr['thumb_dir'])? $arr['thumb_dir'].'/': dirname(__FILE__).'/thumb/';
-            $this->compress     = isset($arr['compress'])? ($arr['compress']>=0 && $arr['compress']<=10)? $arr['compress']:10:8;
+            $this->compress     = isset($arr['compress'])? ($arr['compress']>=0 && $arr['compress']<=1)? $arr['compress']:1:0.8;
+            $this->is_crop_hard = isset($arr['is_crop_hard'])?(bool)$arr['is_crop_hard']:false;
         }
         else return false;
     }
@@ -112,6 +114,40 @@ class ImageResizer{
     }
 
     /**
+     * Check image type and parse data
+     * @param $path
+     * @return bool|resource
+     */
+    private function image_data($path, $mime){
+
+        if (!strstr($mime, 'image/')) {
+            return false;
+        }
+
+        if($mime=='image/png'){ $src_img = imagecreatefrompng($path); }
+        else if($mime=='image/jpeg' or $mime=='image/jpg' or $mime=='image/pjpeg') {
+            $src_img = imagecreatefromjpeg($path);
+        }
+        else $src_img = false;
+        return $src_img;
+    }
+
+    /**
+     * Save new image to new_thumb_loc
+     * @param $path
+     * @param $new_thumb_loc
+     * @param $mime
+     * @return bool
+     */
+    private function save($dst_src, $new_thumb_loc, $mime){
+        if($mime=='image/png'){ $result = imagepng($dst_src,$new_thumb_loc,$this->compress*10); }
+        else if($mime=='image/jpeg' or $mime=='image/jpg' or $mime=='image/pjpeg') {
+            $result = imagejpeg($dst_src,$new_thumb_loc,$this->compress*100);
+        }
+        return $result;
+    }
+
+    /**
      * Create thumbnail from larger image using GD library
      *
      * @param $imageName
@@ -122,50 +158,56 @@ class ImageResizer{
      * @return bool
      */
     private function createThumbnail($imageName,$newWidth,$newHeight,$uploadDir,$moveToDir) {
-        $path = $uploadDir . '/' . $imageName;
+        $path       = $uploadDir . '/' . $imageName;
+        $mime_info  = getimagesize($path);
+        $mime       = $mime_info['mime'];
 
-        $type = mime_content_type($path);
-        if (!strstr($type, 'image/')) {
-            return false;
+        $src_img    = $this->image_data($path, $mime);
+        if($src_img===false) return false;
+
+        $old_w = imageSX($src_img);
+        $old_h = imageSY($src_img);
+
+        $source_aspect_ratio = $old_w / $old_h;
+        $desired_aspect_ratio = $newWidth / $newHeight;
+
+        if ($source_aspect_ratio > $desired_aspect_ratio) {
+            /*
+             * Triggered when source image is wider
+             */
+            $thumb_h = $newHeight;
+            $thumb_w = ( int ) ($newHeight * $source_aspect_ratio);
+        } else {
+            /*
+             * Triggered otherwise (i.e. source image is similar or taller)
+             */
+            $thumb_w = $newWidth;
+            $thumb_h = ( int ) ($newWidth / $source_aspect_ratio);
         }
 
-        $mime = getimagesize($path);
-
-        if($mime['mime']=='image/png'){ $src_img = imagecreatefrompng($path); }
-        else if($mime['mime']=='image/jpeg' or $mime['mime']=='image/jpg' or $mime['mime']=='image/pjpeg') {
-            $src_img = imagecreatefromjpeg($path);
-        }
-
-        $old_x = imageSX($src_img);
-        $old_y = imageSY($src_img);
-
-        if($old_x > $old_y) {
-            $thumb_w    =   $newWidth;
-            $thumb_h    =   $old_y/$old_x*$newWidth;
-        }
-        else if($old_x < $old_y) {
-            $thumb_w    =   $old_x/$old_y*$newHeight;
-            $thumb_h    =   $newHeight;
-        }
-        else {
-            $thumb_w    =   $newWidth;
-            $thumb_h    =   $newHeight;
-        }
-
-        $dst_img        =   ImageCreateTrueColor($thumb_w,$thumb_h);
+        $dst_img     =   ImageCreateTrueColor($thumb_w,$thumb_h);
 
         $color = imagecolorallocatealpha($dst_img, 0, 0, 0, 127);
         imagefill($dst_img,0,0,$color);
         imagesavealpha($dst_img, true);
-        imagecopyresampled($dst_img,$src_img,0,0,0,0,$thumb_w,$thumb_h,$old_x,$old_y);
 
-        // New save location
-        $new_thumb_loc = $moveToDir . $imageName;
+        imagecopyresampled($dst_img, $src_img, 0, 0, 0, 0, $thumb_w, $thumb_h, $old_w, $old_h);
 
-        if($mime['mime']=='image/png'){ $result = imagepng($dst_img,$new_thumb_loc,$this->compress); }
-        else if($mime['mime']=='image/jpeg' or $mime['mime']=='image/jpg' or $mime['mime']=='image/pjpeg') {
-            $result = imagejpeg($dst_img,$new_thumb_loc,$this->compress*10);
+        if($this->is_crop_hard) {
+            $x = ($thumb_w - $newWidth) / 2;
+            $y = ($thumb_h - $newHeight) / 2;
+
+            $tmp_img = imagecreatetruecolor($newWidth, $newHeight);
+            $color = imagecolorallocatealpha($tmp_img, 0, 0, 0, 127);
+            imagefill($tmp_img,0,0,$color);
+            imagesavealpha($tmp_img, true);
+
+            imagecopy($tmp_img, $dst_img, 0, 0, $x, $y, $newWidth, $newHeight);
+            $dst_img = $tmp_img;
         }
+
+        $new_thumb_loc = $moveToDir . $imageName;
+        $result = $this->save($dst_img, $new_thumb_loc, $mime);
 
         imagedestroy($dst_img);
         imagedestroy($src_img);

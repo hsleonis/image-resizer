@@ -8,8 +8,9 @@ require_once ('class.imageresizer.php');
 
 // Create thumbnails
 $args = array(
-    'height'    => 300,
-    'width'     => 200
+    'height'    => 350,
+    'width'     => 250,
+    'is_crop_hard' => 1
 );
 $img = new ImageResizer($args);
 $img->create();
