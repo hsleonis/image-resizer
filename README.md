@@ -51,8 +51,11 @@ $img->create();
 
 # Author
 Md. Hasan Shahriar
-https://github.com/hsleonis
-hsleonis2@gmail.com
+
+Github: https://github.com/hsleonis
+
+Email: hsleonis2@gmail.com
+
 2016
 
 # License
