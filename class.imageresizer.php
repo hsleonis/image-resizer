@@ -157,8 +157,8 @@ class ImageResizer{
      * @param $moveToDir
      * @return bool
      */
-    private function createThumbnail($imageName,$newWidth,$newHeight,$uploadDir,$moveToDir) {
-        $path       = $uploadDir . '/' . $imageName;
+    public function createThumbnail($imageName,$newWidth,$newHeight) {
+        $path       = $this->img_dir . '/' . $imageName;
         $mime_info  = getimagesize($path);
         $mime       = $mime_info['mime'];
 
@@ -197,8 +197,8 @@ class ImageResizer{
             $x = ($thumb_w - $newWidth) / 2;
             $y = ($thumb_h - $newHeight) / 2;
 
-            $tmp_img = imagecreatetruecolor($newWidth, $newHeight);
-            $color = imagecolorallocatealpha($tmp_img, 0, 0, 0, 127);
+            $tmp_img    = imagecreatetruecolor($newWidth, $newHeight);
+            $color      = imagecolorallocatealpha($tmp_img, 0, 0, 0, 127);
             imagefill($tmp_img,0,0,$color);
             imagesavealpha($tmp_img, true);
 
@@ -206,7 +206,7 @@ class ImageResizer{
             $dst_img = $tmp_img;
         }
 
-        $new_thumb_loc = $moveToDir . $imageName;
+        $new_thumb_loc = $this->thumb_dir . $imageName;
         $result = $this->save($dst_img, $new_thumb_loc, $mime);
 
         imagedestroy($dst_img);
@@ -236,7 +236,7 @@ class ImageResizer{
             foreach ($dir as $fileinfo) {
                 if (!$fileinfo->isDot()) {
 
-                    $i = $this->createThumbnail($fileinfo->getFilename(), $this->width, $this->height, $this->img_dir, $this->thumb_dir);
+                    $i = $this->createThumbnail($fileinfo->getFilename(), $this->width, $this->height);
                     if ($i) echo '<li class="msg-success" ><b>' . $fileinfo->getFilename() . '</b> resized.</li>';
                     else echo '<li class="msg-error">Resizing error on <b>' . $fileinfo->getFilename() . '</b></li>';
                 }
