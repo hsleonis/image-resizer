@@ -104,7 +104,4 @@ Email: hsleonis2@gmail.com
 # License
 MIT
 
-Do whatever you want and if possible, keep me in your prayers!
-
-
-Thank you.
+Do whatever you want, keep me in your prayers!
