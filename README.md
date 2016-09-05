@@ -102,6 +102,4 @@ Email: hsleonis2@gmail.com
 2016
 
 # License
-MIT
-
-Do whatever you want, keep me in your prayers!
+Copyright (c) 2016 Md. Hasan Shahriar Licensed under the The MIT License (MIT).
