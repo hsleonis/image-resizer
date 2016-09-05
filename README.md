@@ -102,4 +102,4 @@ Email: hsleonis2@gmail.com
 2016
 
 # License
-Copyright (c) 2016 Md. Hasan Shahriar Licensed under the The [http://opensource.org/licenses/MIT](MIT License (MIT)).
+Copyright (c) 2016 Md. Hasan Shahriar Licensed under the The [MIT License (MIT)](http://opensource.org/licenses/MIT).
